@@ -1,0 +1,11 @@
+__pycache__/
+.vscode/
+build/
+dist/
+
+me.session
+main.spec
+test.py
+
+credentials.json
+emailService.py
