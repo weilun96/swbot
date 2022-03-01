@@ -164,15 +164,15 @@ def checkAndSolveQuiz():
 
 def refillRepeatEnergy():
     # Select Plus Icon
-    time.sleep(1)
+    time.sleep(2)
     device.shell("input touchscreen tap 770 170")
 
     # Select Shop
-    time.sleep(1)
+    time.sleep(2)
     device.shell("input touchscreen tap 525 445")
 
     # Select +190 Recharge
-    time.sleep(1)
+    time.sleep(2)
     device.shell("input touchscreen tap 815 350")
 
     # device.shell('input touchscreen tap 530 350')  # Cheap refill
@@ -180,18 +180,18 @@ def refillRepeatEnergy():
     checkAndSolveQuiz()
 
     # Select Yes
-    time.sleep(1)
+    time.sleep(2)
     device.shell("input touchscreen tap 525 445")
 
     # Select OK
-    time.sleep(1)
+    time.sleep(2)
     device.shell("input touchscreen tap 645 435")
 
     # Select Close
-    time.sleep(1)
+    time.sleep(2)
     device.shell("input touchscreen tap 645 625")
 
-    time.sleep(1)
+    time.sleep(2)
 
 
 def refillEnergy():
