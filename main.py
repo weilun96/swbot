@@ -235,12 +235,32 @@ def handleSortRewards():
     time.sleep(2)
     device.shell("input touchscreen tap 1080 510")
 
+    takeSS()
+    isEnergyEnough = checkEnergy()
+    if not isEnergyEnough:
+        printLog("Energy insufficient... Refilling energy...")
+        refillEnergy()
+    else:
+        printLog("Energy sufficient... Continuing to battle...")
+
+
+
 def handleSortRewardsRiftRaid():
     print("sorting rewards...")
     time.sleep(2)
     device.shell("input touchscreen tap 530 435")
     time.sleep(2)
     device.shell("input touchscreen tap 1140 635")
+
+    takeSS()
+    isEnergyEnough = checkEnergy()
+    if not isEnergyEnough:
+        printLog("Energy insufficient... Refilling energy...")
+        refillEnergy()
+    else:
+        printLog("Energy sufficient... Continuing to battle...")
+
+
 
 
 
