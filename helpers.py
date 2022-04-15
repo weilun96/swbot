@@ -101,6 +101,7 @@ def checkEnergy():
     bottom_y = 335
 
     image = image[top_y:bottom_y, top_x:bottom_x]
+    
 
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (3, 3), 0)

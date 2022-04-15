@@ -22,17 +22,19 @@ except CalledProcessError as e:
 adb = Client(host="127.0.0.1", port=5037)
 # try:
 devices = adb.devices()
+print(devices)
 if len(devices) == 0:
     print("No devices found.")
     print("Attempting to add bluestack...")
     try:
         os.system('cmd /c "adb connect 127.0.0.1:5555"')
         devices = adb.devices()
+        print(devices)
     except Exception as e:
         print("Error:", e)
         quit()
 device = devices[0]
-
+# print(device)
 # try:
 #     client = TelegramClient("me", api_id, api_hash)
 # except Exception as e:
@@ -180,15 +182,15 @@ def refillRepeatEnergy():
     checkAndSolveQuiz()
 
     # Select Yes
-    time.sleep(2)
+    time.sleep(5)
     device.shell("input touchscreen tap 525 445")
 
     # Select OK
-    time.sleep(2)
+    time.sleep(5)
     device.shell("input touchscreen tap 645 435")
 
     # Select Close
-    time.sleep(2)
+    time.sleep(5)
     device.shell("input touchscreen tap 645 625")
 
     time.sleep(2)
@@ -228,10 +230,18 @@ def refillEnergy():
 
 def handleSortRewards():
     print("sorting rewards...")
-    time.sleep(1)
+    time.sleep(2)
     device.shell("input touchscreen tap 530 435")
-    time.sleep(1)
+    time.sleep(2)
     device.shell("input touchscreen tap 1080 510")
+
+def handleSortRewardsRiftRaid():
+    print("sorting rewards...")
+    time.sleep(2)
+    device.shell("input touchscreen tap 530 435")
+    time.sleep(2)
+    device.shell("input touchscreen tap 1140 635")
+
 
 
 def handleSellSelected():
@@ -266,6 +276,27 @@ def replayRepeat():
         refillEnergy()
     elif isEnergyEnough == SORT_REWARDS:
         handleSortRewards()
+    else:
+        printLog("Energy sufficient... Continuing to battle...")
+
+def replayRepeatRiftRaid():
+    # Select Replay
+    time.sleep(1)
+    device.shell("input touchscreen tap 680 620")
+
+    # Select Repeat Battle x10
+    time.sleep(1)
+    device.shell("input touchscreen tap 1140 635")
+
+    printLog("Checking for sufficient energy...")
+    time.sleep(5)
+    takeSS()
+    isEnergyEnough = checkEnergy()
+    if not isEnergyEnough:
+        printLog("Energy insufficient... Refilling energy...")
+        refillEnergy()
+    elif isEnergyEnough == SORT_REWARDS:
+        handleSortRewardsRiftRaid()
     else:
         printLog("Energy sufficient... Continuing to battle...")
 
@@ -371,6 +402,55 @@ def runRepeatDimensionalHole():
         pass
 
 
+
+def runRepeatRiftRaid():
+    # Check repeat battle window open
+    timesFailed = 0
+    try:
+        while True:
+            # Timer to stop. Comment to remove.
+            # addStopTimer(10,0)
+            inWindow = checkInRepeatWindow()
+            if inWindow:
+                takeSS()
+                cropRepeatWindow()
+                checkRepeat = checkRepeatEnd()
+                if REPEAT_BATTLE_ONGOING in checkRepeat:
+                    printLog("Ongoing Battle")
+                    time.sleep(checkDelay)
+                    pass
+                elif MAX_LEVEL in checkRepeat:
+                    printLog("A monster has reached max level...")
+                    printLog("Stopping repeat...")
+                    break
+                elif INSUFFICIENT_ENERGY in checkRepeat:
+                    printLog("Insufficient energy. Refilling energy...")
+                    # quit()
+                    refillRepeatEnergy()
+                    replayRepeatRiftRaid()
+                    pass
+                elif LOST_BATTLE in checkRepeat:
+                    printLog("Lost in battle. Replaying...")
+                    # client.send_message('me', f'Lost in battle. Times lost :{timesFailed}')
+                    timesFailed += 1
+                    printLog(f"Times failed since start of bot: {timesFailed}")
+                    # sendEmail("Summoners war notification", f"Lost in battle, number of times lost: {timesFailed}")
+                    # handleSellSelected()
+                    replayRepeatRiftRaid()
+                    pass
+                else:
+                    printLog("Battle ended. Replaying...")
+                    # handleSellSelected()
+                    replayRepeatRiftRaid()
+                    pass
+                time.sleep(10)
+            else:
+                printLog("Please open repeat battle window.")
+                time.sleep(10)
+    except KeyboardInterrupt:
+        printLog(f"Times failed since start of bot: {timesFailed}")
+        pass
+
 def toaClimb():
     try:
         while True:
@@ -411,8 +491,9 @@ def main():
         print("1. Normal BOT")
         print("2. Repeat Battle BOT")
         print("3. Repeat Battle for Dimensional Hole BOT")
-        print("4. ToA Climbing")
-        print("5. Quit")
+        print("4. Repeat Battle for Rift Raid BOT")
+        print("5. ToA Climbing")
+        print("6. Quit")
         choice = input("Choice: ")
 
         if choice.isdigit():
@@ -430,9 +511,12 @@ def main():
             print("Entering repeat battle BOT for Dimensional Hole...")
             runRepeatDimensionalHole()
         elif choice == 4:
+            print("Entering repeat battle BOT for Rift Raid...")
+            runRepeatRiftRaid()
+        elif choice == 5:
             print("Entering ToA climb...")
             toaClimb()
-        elif choice == 5:
+        elif choice == 6:
             print("Exiting...")
             break
         else:
